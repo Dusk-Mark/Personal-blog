@@ -88,10 +88,14 @@ export default function PostForm({ post, categories }: PostFormProps) {
       category_id: formData.category_id || null,
       published: formData.published,
       cover_image: formData.cover_image || null,
-      tags: formData.tags ? formData.tags.split(',').map(t => t.trim()).filter(t => t) : null,
       updated_at: new Date().toISOString(),
       published_at: formData.published ? (post?.published_at || new Date().toISOString()) : null,
     };
+
+    // 只有当 tags 有值时才添加，避免 schema 缓存问题导致保存失败
+    if (formData.tags) {
+      postData.tags = formData.tags.split(',').map(t => t.trim()).filter(t => t);
+    }
 
     let error;
     if (post?.id) {
