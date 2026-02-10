@@ -82,7 +82,7 @@ export default function PostForm({ post, categories }: PostFormProps) {
     e.preventDefault();
     setLoading(true);
 
-    const postData = {
+    const postData: any = {
       title: formData.title,
       slug: formData.slug,
       excerpt: formData.excerpt,
@@ -91,10 +91,14 @@ export default function PostForm({ post, categories }: PostFormProps) {
       published: formData.published,
       cover_image: formData.cover_image || null,
       tags: formData.tags ? formData.tags.split(',').map(t => t.trim()).filter(t => t) : null,
-      read_time: Number(formData.read_time),
       updated_at: new Date().toISOString(),
       published_at: formData.published ? (post?.published_at || new Date().toISOString()) : null,
     };
+
+    // 只有当 read_time 有效时才添加，避免 schema 缓存问题导致保存失败
+    if (formData.read_time) {
+      postData.read_time = Number(formData.read_time);
+    }
 
     let error;
     if (post?.id) {
