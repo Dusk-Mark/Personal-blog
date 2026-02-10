@@ -16,7 +16,6 @@ export interface Post {
   published_at: string | null;
   category_id: string | null;
   tags: string[] | null;
-  read_time: number | null;
   created_at: string;
   updated_at: string;
   categories?: Category; // Supabase join result

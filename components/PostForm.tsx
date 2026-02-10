@@ -26,7 +26,6 @@ export default function PostForm({ post, categories }: PostFormProps) {
     published: post?.published || false,
     cover_image: post?.cover_image || '',
     tags: post?.tags?.join(', ') || '',
-    read_time: post?.read_time || 5,
   });
 
   const handleFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,7 +64,6 @@ export default function PostForm({ post, categories }: PostFormProps) {
           excerpt: frontmatter.excerpt || frontmatter.description || prev.excerpt,
           tags: frontmatter.tags || prev.tags,
           content: content.trim(),
-          read_time: frontmatter.read_time ? parseInt(frontmatter.read_time) : (frontmatter.readtime ? parseInt(frontmatter.readtime) : prev.read_time),
           category_id: matchedCategory ? matchedCategory.id : prev.category_id,
         }));
       } else {
@@ -94,11 +92,6 @@ export default function PostForm({ post, categories }: PostFormProps) {
       updated_at: new Date().toISOString(),
       published_at: formData.published ? (post?.published_at || new Date().toISOString()) : null,
     };
-
-    // 只有当 read_time 有效时才添加，避免 schema 缓存问题导致保存失败
-    if (formData.read_time) {
-      postData.read_time = Number(formData.read_time);
-    }
 
     let error;
     if (post?.id) {
@@ -243,16 +236,6 @@ export default function PostForm({ post, categories }: PostFormProps) {
                     className="w-full rounded-2xl border-border bg-muted px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none"
                     value={formData.tags}
                     onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  <label className="text-xs font-bold text-muted-foreground uppercase ml-1">预计阅读时间 (分钟)</label>
-                  <input
-                    type="number"
-                    className="w-full rounded-2xl border-border bg-muted px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none"
-                    value={formData.read_time}
-                    onChange={(e) => setFormData({ ...formData, read_time: parseInt(e.target.value) })}
                   />
                 </div>
 

@@ -56,14 +56,6 @@ export default async function PostPage({ params }: PostPageProps) {
                 {post.categories.name}
               </span>
             )}
-            {post.read_time && (
-              <span className="clay-tag bg-secondary/20 px-4 py-2 text-xs font-medium text-secondary flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                {post.read_time} 分钟阅读
-              </span>
-            )}
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-gradient leading-tight">
             {post.title}
