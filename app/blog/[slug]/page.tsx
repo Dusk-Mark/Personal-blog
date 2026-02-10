@@ -5,11 +5,10 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import Link from "next/link";
 import { Metadata } from "next";
+import { Post } from "@/types/database";
 
 interface PostPageProps {
-  params: Promise<{
-    slug: string;
-  }>;
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
@@ -33,20 +32,26 @@ export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
   const supabase = await createClient();
 
-  const { data: post, error } = await supabase
+  const { data: postDataRaw, error } = await supabase
     .from('posts')
-    .select('id, title, content, cover_image, published_at, category_id, categories(name)')
+    .select('id, title, content, cover_image, created_at, published_at, category_id, categories(name)')
     .eq('slug', slug)
     .eq('published', true)
     .single();
 
-  if (error || !post) {
+  if (error || !postDataRaw) {
     notFound();
   }
 
-  const formattedDate = post.published_at
-    ? new Date(post.published_at).toLocaleDateString("zh-CN")
-    : new Date(post.created_at).toLocaleDateString("zh-CN");
+  const postData = postDataRaw as any;
+  // 处理 Supabase 可能返回数组的情况
+  const category = Array.isArray(postData.categories) 
+    ? postData.categories[0] 
+    : postData.categories;
+
+  const formattedDate = postData.published_at
+    ? new Date(postData.published_at).toLocaleDateString("zh-CN")
+    : new Date(postData.created_at).toLocaleDateString("zh-CN");
 
   return (
     <article className="container mx-auto max-w-3xl px-4 py-16">
@@ -67,39 +72,39 @@ export default async function PostPage({ params }: PostPageProps) {
         <header className="space-y-6">
           <div className="flex flex-wrap items-center gap-4 text-sm">
             <time 
-              dateTime={post.created_at} 
+              dateTime={postData.created_at} 
               className="clay-tag bg-muted px-4 py-2 text-muted-foreground"
             >
               {formattedDate}
             </time>
-            {post.categories?.name && (
+            {category?.name && (
               <span className="clay-tag bg-primary/20 px-4 py-2 text-xs font-medium text-primary">
-                {post.categories.name}
+                {category.name}
               </span>
             )}
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-gradient leading-tight">
-            {post.title}
+            {postData.title}
           </h1>
-          {post.excerpt && (
+          {postData.excerpt && (
             <p className="text-xl text-muted-foreground leading-relaxed">
-              {post.excerpt}
+              {postData.excerpt}
             </p>
           )}
         </header>
 
-        {post.cover_image && (
+        {postData.cover_image && (
           <figure className="mt-8 mb-8">
             <div className="clay-card p-2 rounded-2xl">
               <img
-                src={post.cover_image}
-                alt={post.title}
+                src={postData.cover_image}
+                alt={postData.title}
                 className="rounded-xl object-cover w-full aspect-video"
                 loading="lazy"
               />
             </div>
             <figcaption className="mt-4 text-center text-sm text-muted-foreground">
-              {post.title}
+              {postData.title}
             </figcaption>
           </figure>
         )}
@@ -119,16 +124,16 @@ export default async function PostPage({ params }: PostPageProps) {
             remarkPlugins={[remarkGfm]} 
             rehypePlugins={[rehypeRaw]}
           >
-            {post.content}
+            {postData.content}
           </ReactMarkdown>
         </div>
       </div>
 
-      {post.tags && post.tags.length > 0 && (
+      {postData.tags && postData.tags.length > 0 && (
         <div className="mt-12 clay-card p-8 rounded-2xl">
           <h3 className="text-sm font-medium text-muted-foreground mb-6">文章标签</h3>
           <div className="flex flex-wrap gap-3">
-            {post.tags.map((tag: string, index: number) => (
+            {postData.tags.map((tag: string, index: number) => (
               <Link
                 key={index}
                 href={`/?tag=${tag}`}

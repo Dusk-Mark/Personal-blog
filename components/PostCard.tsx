@@ -10,6 +10,11 @@ export default function PostCard({ post }: PostCardProps) {
     ? new Date(post.published_at).toLocaleDateString('zh-CN') 
     : new Date(post.created_at).toLocaleDateString('zh-CN');
 
+  // 处理 Supabase 可能返回数组的情况
+  const category = Array.isArray(post.categories) 
+    ? post.categories[0] 
+    : post.categories;
+
   return (
     <article className="group flex flex-col space-y-6 clay-card p-8 rounded-2xl hover:scale-[1.02] transition-all duration-300">
       <div className="flex flex-wrap items-center gap-4 text-sm">
@@ -19,9 +24,9 @@ export default function PostCard({ post }: PostCardProps) {
         >
           {formattedDate}
         </time>
-        {post.categories?.name && (
+        {category?.name && (
           <span className="clay-tag bg-primary/20 px-4 py-2 text-xs font-medium text-primary">
-            {post.categories.name}
+            {category.name}
           </span>
         )}
       </div>
