@@ -16,11 +16,20 @@ const geistMono = Geist_Mono({
 
 export async function generateMetadata(): Promise<Metadata> {
   const supabase = await createClient();
-  const { data: settings } = await supabase.from('settings').select('*').eq('id', 1).single();
+  const { data: settings } = await supabase
+    .from('settings')
+    .select('blog_name, blog_description')
+    .eq('id', 1)
+    .single();
+  
+  const blogName = settings?.blog_name || "Mark的博客";
   
   return {
-    title: settings?.blog_name || "我的个人博客",
-    description: settings?.blog_description || "基于 Next.js + Supabase 开发的个人博客",
+    title: {
+      template: `%s | ${blogName}`,
+      default: blogName,
+    },
+    description: settings?.blog_description || "基于 Next.js + Supabase 开发的 Mark 个人博客",
   };
 }
 
@@ -30,7 +39,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const supabase = await createClient();
-  const { data: settings } = await supabase.from('settings').select('*').eq('id', 1).single();
+  const { data: settings } = await supabase
+    .from('settings')
+    .select('blog_name, footer_text, social_links')
+    .eq('id', 1)
+    .single();
 
   return (
     <html lang="zh-CN">

@@ -1,8 +1,9 @@
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 import PostCard from "@/components/PostCard";
 import { Post } from "@/types/database";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Metadata } from "next";
 
 interface CategoryPageProps {
   params: Promise<{
@@ -10,24 +11,43 @@ interface CategoryPageProps {
   }>;
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-
-  // 首先获取分类信息
+  const supabase = await createClient();
   const { data: category } = await supabase
     .from('categories')
-    .select('*')
-    .eq('slug', slug)
-    .single();
+    .select('name')
+    .or(`slug.eq.${slug},name.ilike.%${slug}%`)
+    .maybeSingle();
+
+  return {
+    title: `${category?.name || '分类'} - Mark的博客`,
+    description: `浏览 Mark的博客 中关于 ${category?.name || '该分类'} 的所有文章`,
+  };
+}
+
+export const revalidate = 3600; // 每小时刷新一次缓存
+
+export default async function CategoryPage({ params }: CategoryPageProps) {
+  const { slug } = await params;
+  const supabase = await createClient();
+
+  // 1. 先获取分类信息（用于后续并行请求的基础）
+  const { data: category } = await supabase
+    .from('categories')
+    .select('id, name, slug')
+    .or(`slug.eq.${slug},name.ilike.%${slug}%`)
+    .maybeSingle();
 
   if (!category) {
+    console.error('Category not found for slug:', slug);
     notFound();
   }
 
-  // 获取该分类下的已发布文章
+  // 2. 获取该分类下的文章
   const { data: posts, error } = await supabase
     .from('posts')
-    .select('*, categories(name)')
+    .select('id, title, slug, excerpt, cover_image, created_at, category_id, categories(name)')
     .eq('published', true)
     .eq('category_id', category.id)
     .order('created_at', { ascending: false });

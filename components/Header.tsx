@@ -9,6 +9,7 @@ interface HeaderProps {
 }
 
 export default function Header({ blogName }: HeaderProps) {
+  const displayBlogName = blogName || 'Mark的博客';
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -43,7 +44,7 @@ export default function Header({ blogName }: HeaderProps) {
                 className="text-2xl font-bold text-gradient hover:scale-105 transition-transform clay-stretch"
                 aria-label="返回首页"
               >
-                {blogName || '个人博客'}
+                {displayBlogName}
               </Link>
               
               <nav className="flex items-center gap-6">
@@ -85,7 +86,7 @@ export default function Header({ blogName }: HeaderProps) {
                 className="text-xl font-bold text-gradient hover:scale-105 transition-transform clay-stretch"
                 aria-label="返回首页"
               >
-                {blogName || '个人博客'}
+                {displayBlogName}
               </Link>
               
               {/* 移动端菜单按钮 */}

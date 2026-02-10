@@ -58,7 +58,10 @@ export default function CategoryManager() {
   return (
     <div className="space-y-8">
       <div className="clay-card p-6 animate-fade-in">
-        <h2 className="mb-4 text-lg font-medium bg-gradient-to-r from-sky-500 via-mint-500 to-coral-400 bg-clip-text text-transparent">添加新分类</h2>
+        <h2 className="mb-4 text-lg font-medium bg-gradient-to-r from-sky-500 via-mint-500 to-coral-400 bg-clip-text text-transparent flex items-center justify-between">
+          添加新分类
+          <span className="text-xs font-normal text-muted-foreground">建议添加：技术分享 (tech)、日常随笔 (daily)</span>
+        </h2>
         <form onSubmit={handleAdd} className="flex flex-wrap gap-4">
           <input
             required

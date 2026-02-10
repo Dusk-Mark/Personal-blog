@@ -1,9 +1,10 @@
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import Link from "next/link";
+import { Metadata } from "next";
 
 interface PostPageProps {
   params: Promise<{
@@ -11,14 +12,32 @@ interface PostPageProps {
   }>;
 }
 
+export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const supabase = await createClient();
+  const { data: post } = await supabase
+    .from('posts')
+    .select('title, excerpt')
+    .eq('slug', slug)
+    .single();
+
+  return {
+    title: post?.title || '文章详情',
+    description: post?.excerpt || '文章详情页',
+  };
+}
+
+export const revalidate = 3600; // 文章内容缓存一小时
+
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
+  const supabase = await createClient();
 
   const { data: post, error } = await supabase
-    .from("posts")
-    .select("*, categories(name)")
-    .eq("slug", slug)
-    .eq("published", true)
+    .from('posts')
+    .select('id, title, content, cover_image, published_at, category_id, categories(name)')
+    .eq('slug', slug)
+    .eq('published', true)
     .single();
 
   if (error || !post) {
