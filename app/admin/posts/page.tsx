@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
 import { Post } from '@/types/database';
+import DeletePostButton from '@/components/DeletePostButton';
 
 export default async function AdminPostsPage() {
   const supabase = await createClient();
@@ -71,6 +72,7 @@ export default async function AdminPostsPage() {
                         >
                           预览
                         </Link>
+                        <DeletePostButton postId={post.id} />
                       </div>
                     </td>
                   </tr>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Post, Category } from '@/types/database';
 import { createClient } from '@/utils/supabase/client';
@@ -14,6 +14,7 @@ interface PostFormProps {
 export default function PostForm({ post, categories }: PostFormProps) {
   const router = useRouter();
   const supabase = createClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'write' | 'preview'>('write');
   const [formData, setFormData] = useState({
@@ -27,6 +28,55 @@ export default function PostForm({ post, categories }: PostFormProps) {
     tags: post?.tags?.join(', ') || '',
     read_time: post?.read_time || 5,
   });
+
+  const handleFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target?.result as string;
+      // 增强的 Frontmatter 解析正则，支持不同的换行符
+      const frontmatterRegex = /^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/;
+      const match = text.match(frontmatterRegex);
+
+      if (match) {
+        const yamlContent = match[1];
+        const content = match[2];
+        
+        const frontmatter: Record<string, string> = {};
+        yamlContent.split('\n').forEach(line => {
+          const firstColonIndex = line.indexOf(':');
+          if (firstColonIndex !== -1) {
+            const key = line.slice(0, firstColonIndex).trim().toLowerCase();
+            const value = line.slice(firstColonIndex + 1).trim();
+            // 去掉引号
+            frontmatter[key] = value.replace(/^["'](.*)["']$/, '$1');
+          }
+        });
+
+        const categoryName = frontmatter.category || frontmatter.categories;
+        const matchedCategory = categories.find(c => c.name.toLowerCase() === categoryName?.toLowerCase());
+
+        setFormData(prev => ({
+          ...prev,
+          title: frontmatter.title || prev.title,
+          slug: frontmatter.slug || prev.slug,
+          excerpt: frontmatter.excerpt || frontmatter.description || prev.excerpt,
+          tags: frontmatter.tags || prev.tags,
+          content: content.trim(),
+          read_time: frontmatter.read_time ? parseInt(frontmatter.read_time) : (frontmatter.readtime ? parseInt(frontmatter.readtime) : prev.read_time),
+          category_id: matchedCategory ? matchedCategory.id : prev.category_id,
+        }));
+      } else {
+        // 没有 frontmatter，直接设置内容
+        setFormData(prev => ({ ...prev, content: text.trim() }));
+      }
+      // 重置 input，允许重复导入同一个文件
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    };
+    reader.readAsText(file);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,6 +169,24 @@ export default function PostForm({ post, categories }: PostFormProps) {
                 >
                   预览
                   {activeTab === 'preview' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />}
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2 mb-2">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileImport}
+                  accept=".md,.markdown"
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold clay-button bg-muted text-muted-foreground hover:text-foreground transition-all"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  导入 Markdown
                 </button>
               </div>
             </div>
