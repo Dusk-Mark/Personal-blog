@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Post, Category } from '@/types/database';
 import { createClient } from '@/utils/supabase/client';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 
 interface PostFormProps {
   post?: Post;
@@ -203,8 +205,21 @@ export default function PostForm({ post, categories }: PostFormProps) {
                 />
               </div>
             ) : (
-              <div className="prose dark:prose-invert max-w-none min-h-[600px] h-[600px] overflow-y-auto bg-muted/10 rounded-3xl p-8 border border-border/30">
-                <ReactMarkdown>{formData.content || '*空内容*'}</ReactMarkdown>
+              <div className="prose dark:prose-invert max-w-none min-h-[600px] h-[600px] overflow-y-auto bg-muted/10 rounded-3xl p-8 border border-border/30
+                prose-headings:font-bold prose-headings:text-foreground 
+                prose-p:text-foreground/90 prose-p:leading-relaxed
+                prose-a:text-primary prose-a:no-underline prose-a:font-medium prose-a:hover:underline 
+                prose-img:rounded-2xl prose-img:shadow-lg prose-img:mx-auto
+                prose-code:text-primary prose-code:bg-primary/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none
+                prose-pre:bg-muted prose-pre:rounded-2xl prose-pre:shadow-inner prose-pre:border prose-pre:border-border/50
+                prose-ul:list-disc prose-ul:pl-5 prose-ol:pl-5
+                prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:py-2 prose-blockquote:pr-4 prose-blockquote:rounded-r-xl">
+                <ReactMarkdown 
+                  remarkPlugins={[remarkGfm]} 
+                  rehypePlugins={[rehypeRaw]}
+                >
+                  {formData.content || '*空内容*'}
+                </ReactMarkdown>
               </div>
             )}
           </div>

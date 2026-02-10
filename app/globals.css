@@ -196,7 +196,23 @@ body {
     -4px -4px 8px rgba(255, 255, 255, 0.9);
 }
 
-/* 全局动画和过渡效果 */
+/* 优化文章内的 HTML 标签呈现 */
+.prose font {
+  color: inherit !important;
+  background-color: transparent !important;
+  font-family: inherit !important;
+}
+
+/* 确保暗色模式下内联样式的兼容性 */
+.dark .prose [style*="background-color"] {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark .prose [style*="color"] {
+  color: inherit !important;
+}
+
+/* 基础样式补丁 */
 * {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
 }

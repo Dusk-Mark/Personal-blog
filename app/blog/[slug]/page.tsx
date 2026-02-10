@@ -1,6 +1,8 @@
 import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import Link from "next/link";
 
 interface PostPageProps {
@@ -85,8 +87,21 @@ export default async function PostPage({ params }: PostPageProps) {
       </div>
 
       <div className="clay-card p-8 md:p-12 rounded-2xl">
-        <div className="prose prose-lg prose-primary max-w-none prose-headings:font-bold prose-headings:text-foreground prose-p:text-foreground/90 prose-a:text-primary prose-a:no-underline prose-a:font-medium prose-a:hover:underline prose-img:rounded-lg prose-ul:list-disc prose-ul:pl-5 prose-ol:pl-5">
-          <ReactMarkdown>{post.content}</ReactMarkdown>
+        <div className="prose prose-base md:prose-lg prose-primary dark:prose-invert max-w-none 
+          prose-headings:font-bold prose-headings:text-foreground 
+          prose-p:text-foreground/90 prose-p:leading-relaxed
+          prose-a:text-primary prose-a:no-underline prose-a:font-medium prose-a:hover:underline 
+          prose-img:rounded-2xl prose-img:shadow-lg prose-img:mx-auto
+          prose-code:text-primary prose-code:bg-primary/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none
+          prose-pre:bg-muted prose-pre:rounded-2xl prose-pre:shadow-inner prose-pre:border prose-pre:border-border/50
+          prose-ul:list-disc prose-ul:pl-5 prose-ol:pl-5
+          prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:py-2 prose-blockquote:pr-4 prose-blockquote:rounded-r-xl">
+          <ReactMarkdown 
+            remarkPlugins={[remarkGfm]} 
+            rehypePlugins={[rehypeRaw]}
+          >
+            {post.content}
+          </ReactMarkdown>
         </div>
       </div>
 
