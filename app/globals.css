@@ -1,26 +1,579 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* 黏土塑形美学的颜色方案 */
+  --background: #fef9f3;
+  --foreground: #2d2d2d;
+  --primary: #7ec8e3;
+  --primary-foreground: #2d2d2d;
+  --secondary: #91d8c2;
+  --secondary-foreground: #2d2d2d;
+  --accent: #ffb6c1;
+  --accent-foreground: #2d2d2d;
+  --muted: #fef5e7;
+  --muted-foreground: #6b5b4b;
+  --border: #f5e6d3;
+  --card: #ffffff;
+  --card-foreground: #2d2d2d;
+  --sunshine: #ffd700;
+  --sunshine-foreground: #2d2d2d;
+}
+
+.dark {
+  --background: #24211e;
+  --foreground: #fef9f3;
+  --primary: #7ec8e3;
+  --primary-foreground: #24211e;
+  --secondary: #91d8c2;
+  --secondary-foreground: #24211e;
+  --accent: #ffb6c1;
+  --accent-foreground: #24211e;
+  --muted: #2d2a27;
+  --muted-foreground: #a0958a;
+  --border: #3d3a37;
+  --card: #2d2a27;
+  --card-foreground: #fef9f3;
+  --sunshine: #ffd700;
+  --sunshine-foreground: #24211e;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-sunshine: var(--sunshine);
+  --color-sunshine-foreground: var(--sunshine-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* 黏土风格的基础样式 */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 黏土风格的卡片效果 */
+.clay-card {
+  background: var(--card);
+  border-radius: 20px;
+  box-shadow: 
+    8px 8px 16px rgba(0, 0, 0, 0.05),
+    -8px -8px 16px rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.clay-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    12px 12px 24px rgba(0, 0, 0, 0.08),
+    -12px -12px 24px rgba(255, 255, 255, 0.9);
+}
+
+/* 黏土风格的按钮效果 */
+.clay-button {
+  border-radius: 16px;
+  box-shadow: 
+    4px 4px 8px rgba(0, 0, 0, 0.1),
+    -4px -4px 8px rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+  border: 1px solid var(--border);
+}
+
+.clay-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    6px 6px 12px rgba(0, 0, 0, 0.12),
+    -6px -6px 12px rgba(255, 255, 255, 0.9);
+}
+
+.clay-button:active {
+  transform: translateY(0);
+  box-shadow: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.1),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+/* 按钮颜色变体 */
+.clay-button.primary {
+  background: linear-gradient(145deg, var(--primary), var(--secondary));
+  color: var(--primary-foreground);
+}
+
+.clay-button.secondary {
+  background: linear-gradient(145deg, var(--card), var(--muted));
+  color: var(--foreground);
+}
+
+.clay-button.danger {
+  background: linear-gradient(145deg, #ff6b6b, #ff8787);
+  color: white;
+}
+
+/* 小型按钮 */
+.clay-button.secondary-sm {
+  border-radius: 12px;
+  box-shadow: 
+    3px 3px 6px rgba(0, 0, 0, 0.08),
+    -3px -3px 6px rgba(255, 255, 255, 0.8);
+  background: linear-gradient(145deg, var(--card), var(--muted));
+  color: var(--foreground);
+}
+
+.clay-button.danger-sm {
+  border-radius: 12px;
+  box-shadow: 
+    3px 3px 6px rgba(0, 0, 0, 0.08),
+    -3px -3px 6px rgba(255, 255, 255, 0.8);
+  background: linear-gradient(145deg, #ff6b6b, #ff8787);
+  color: white;
+}
+
+.clay-button.secondary-sm:hover,
+.clay-button.danger-sm:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    4px 4px 8px rgba(0, 0, 0, 0.1),
+    -4px -4px 8px rgba(255, 255, 255, 0.9);
+}
+
+.clay-button.secondary-sm:active,
+.clay-button.danger-sm:active {
+  transform: translateY(0);
+  box-shadow: 
+    inset 3px 3px 6px rgba(0, 0, 0, 0.08),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+/* 黏土风格的输入框效果 */
+.clay-input {
+  border-radius: 12px;
+  box-shadow: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.05),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.clay-input:focus {
+  box-shadow: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.08),
+    inset -6px -6px 12px rgba(255, 255, 255, 0.9);
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* 黏土风格的标签效果 */
+.clay-tag {
+  border-radius: 20px;
+  box-shadow: 
+    3px 3px 6px rgba(0, 0, 0, 0.08),
+    -3px -3px 6px rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.clay-tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    4px 4px 8px rgba(0, 0, 0, 0.1),
+    -4px -4px 8px rgba(255, 255, 255, 0.9);
+}
+
+/* 全局动画和过渡效果 */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--secondary);
+  border-radius: 4px;
+  box-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.1),
+    -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* 文本选择样式 */
+::selection {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* 滚动条平滑 */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 淡入动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in,
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+/* 淡入延迟动画 */
+.fade-in-delay-1,
+.animation-delay-100 {
+  animation: fadeIn 0.6s ease-out 0.1s forwards;
+  opacity: 0;
+}
+
+.fade-in-delay-2,
+.animation-delay-200 {
+  animation: fadeIn 0.6s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+.fade-in-delay-3,
+.animation-delay-300 {
+  animation: fadeIn 0.6s ease-out 0.3s forwards;
+  opacity: 0;
+}
+
+/* 缩放动画 */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.scale-in {
+  animation: scaleIn 0.4s ease-out forwards;
+}
+
+/* 脉冲动画 */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* 加载动画 */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+/* 悬停上浮效果 */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* 按钮点击效果 */
+.btn-click {
+  transition: transform 0.1s ease;
+}
+
+.btn-click:active {
+  transform: scale(0.98);
+}
+
+/* 文本渐变动画 */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent), var(--sunshine));
+  background-size: 300% 300%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 4s ease infinite;
+}
+
+/* 黏土按压效果 */
+@keyframes clayPress {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.96);
+    box-shadow: 
+      inset 6px 6px 12px rgba(0, 0, 0, 0.15),
+      inset -6px -6px 12px rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.clay-press:active {
+  animation: clayPress 0.3s ease-out;
+}
+
+/* 黏土拉伸效果 */
+@keyframes clayStretch {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.clay-stretch:hover {
+  animation: clayStretch 0.6s ease-in-out;
+}
+
+/* 滚动触发动画 */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in-up {
+  animation: slideInUp 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.slide-in-down {
+  animation: slideInDown 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+/* 导航栏滚动效果 */
+.nav-scroll {
+  transition: all 0.3s ease;
+}
+
+.nav-scroll.scrolled {
+  background-color: rgba(254, 249, 243, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* 卡片3D翻转效果 */
+@keyframes flipCard {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(180deg);
+  }
+}
+
+.flip-card {
+  perspective: 1000px;
+}
+
+.flip-card-inner {
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+}
+
+/* 骨架屏动画 */
+@keyframes pulseSkeleton {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--muted) 25%, var(--border) 50%, var(--muted) 75%);
+  background-size: 200% 100%;
+  animation: pulseSkeleton 1.5s ease-in-out infinite;
+}
+
+/* 加载动画 - 黏土风格 */
+@keyframes clayLoader {
+  0%, 100% {
+    transform: scale(1);
+    border-radius: 50%;
+  }
+  50% {
+    transform: scale(1.2);
+    border-radius: 40%;
+  }
+}
+
+.clay-loader {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
+  background-size: 300% 300%;
+  animation: clayLoader 2s ease-in-out infinite, gradientShift 4s ease infinite;
+}
+
+/* 按钮涟漪效果 */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.ripple-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-effect::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.ripple-effect:active::after {
+  width: 300px;
+  height: 300px;
 }
