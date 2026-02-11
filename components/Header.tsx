@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import SearchBar from './SearchBar';
 
 interface HeaderProps {
   blogName?: string;
@@ -47,32 +48,35 @@ export default function Header({ blogName }: HeaderProps) {
                 {displayBlogName}
               </Link>
               
-              <nav className="flex items-center gap-6">
-                <Link 
-                  href="/" 
-                  className={`clay-button px-6 py-3 text-sm font-medium transition-all ${isActive('/') 
-                    ? 'bg-primary text-primary-foreground' 
-                    : 'bg-muted hover:bg-muted/80 text-muted-foreground'} clay-press ripple-effect`}
-                >
-                  首页
-                </Link>
-                <Link 
-                  href="/about" 
-                  className={`clay-button px-6 py-3 text-sm font-medium transition-all ${isActive('/about') 
-                    ? 'bg-secondary text-secondary-foreground' 
-                    : 'bg-muted hover:bg-muted/80 text-muted-foreground'} clay-press ripple-effect`}
-                >
-                  关于
-                </Link>
-                <Link 
-                  href="/admin" 
-                  className={`clay-button px-6 py-3 text-sm font-medium transition-all ${isActive('/admin') 
-                    ? 'bg-accent text-accent-foreground' 
-                    : 'bg-muted hover:bg-muted/80 text-muted-foreground'} clay-press ripple-effect`}
-                >
-                  管理
-                </Link>
-              </nav>
+              <div className="flex items-center gap-6">
+                <SearchBar compact className="w-64" />
+                <nav className="flex items-center gap-6">
+                  <Link 
+                    href="/" 
+                    className={`clay-button px-6 py-3 text-sm font-medium transition-all ${isActive('/') 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-muted hover:bg-muted/80 text-muted-foreground'} clay-press ripple-effect`}
+                  >
+                    首页
+                  </Link>
+                  <Link 
+                    href="/about" 
+                    className={`clay-button px-6 py-3 text-sm font-medium transition-all ${isActive('/about') 
+                      ? 'bg-secondary text-secondary-foreground' 
+                      : 'bg-muted hover:bg-muted/80 text-muted-foreground'} clay-press ripple-effect`}
+                  >
+                    关于
+                  </Link>
+                  <Link 
+                    href="/admin" 
+                    className={`clay-button px-6 py-3 text-sm font-medium transition-all ${isActive('/admin') 
+                      ? 'bg-accent text-accent-foreground' 
+                      : 'bg-muted hover:bg-muted/80 text-muted-foreground'} clay-press ripple-effect`}
+                  >
+                    管理
+                  </Link>
+                </nav>
+              </div>
             </div>
           </div>
         </div>
@@ -108,6 +112,9 @@ export default function Header({ blogName }: HeaderProps) {
             {/* 移动端导航菜单 */}
             {isMenuOpen && (
               <div className="mt-4 space-y-3 slide-in-down">
+                <div className="px-2 pb-2">
+                  <SearchBar compact className="w-full" />
+                </div>
                 <Link 
                   href="/" 
                   className={`clay-button block w-full px-6 py-3 text-sm font-medium text-center transition-all ${isActive('/') 
