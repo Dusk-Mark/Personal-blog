@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import { createClient } from "@/utils/supabase/server";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,34 +47,41 @@ export default async function RootLayout({
     .single();
 
   return (
-    <html lang="zh-CN">
+    <html lang="zh-CN" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
-        <Header blogName={settings?.blog_name} />
-        <main className="min-h-screen">
-          {children}
-        </main>
-        <footer className="border-t border-zinc-200 py-12 dark:border-zinc-800">
-          <div className="container mx-auto max-w-5xl px-4">
-            <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
-              <div className="text-sm text-zinc-500">
-                © {new Date().getFullYear()} {settings?.blog_name}. {settings?.footer_text || 'Built with Next.js & Supabase.'}
-              </div>
-              <div className="flex gap-6">
-                {settings?.social_links?.github && (
-                  <a href={settings.social_links.github} target="_blank" className="text-sm text-zinc-500 hover:text-black dark:hover:text-white">GitHub</a>
-                )}
-                {settings?.social_links?.twitter && (
-                  <a href={settings.social_links.twitter} target="_blank" className="text-sm text-zinc-500 hover:text-black dark:hover:text-white">Twitter</a>
-                )}
-                {settings?.social_links?.email && (
-                  <a href={`mailto:${settings.social_links.email}`} className="text-sm text-zinc-500 hover:text-black dark:hover:text-white">Email</a>
-                )}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Header blogName={settings?.blog_name} />
+          <main className="min-h-screen">
+            {children}
+          </main>
+          <footer className="border-t border-zinc-200 py-12 dark:border-zinc-800">
+            <div className="container mx-auto max-w-5xl px-4">
+              <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
+                <div className="text-sm text-zinc-500">
+                  © {new Date().getFullYear()} {settings?.blog_name}. {settings?.footer_text || 'Built with Next.js & Supabase.'}
+                </div>
+                <div className="flex gap-6">
+                  {settings?.social_links?.github && (
+                    <a href={settings.social_links.github} target="_blank" className="text-sm text-zinc-500 hover:text-black dark:hover:text-white transition-colors">GitHub</a>
+                  )}
+                  {settings?.social_links?.twitter && (
+                    <a href={settings.social_links.twitter} target="_blank" className="text-sm text-zinc-500 hover:text-black dark:hover:text-white transition-colors">Twitter</a>
+                  )}
+                  {settings?.social_links?.email && (
+                    <a href={`mailto:${settings.social_links.email}`} className="text-sm text-zinc-500 hover:text-black dark:hover:text-white transition-colors">Email</a>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        </footer>
+          </footer>
+        </ThemeProvider>
       </body>
     </html>
   );
