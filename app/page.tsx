@@ -23,6 +23,9 @@ export default async function Home() {
   const posts = postsResult.data;
   const error = postsResult.error;
 
+  const lovedCategory = categories?.find(c => c.slug === 'loved');
+  const filteredPosts = posts?.filter(post => post.category_id !== lovedCategory?.id);
+
   const techCategory = categories?.find(c => c.name.includes('技术'));
   const lifeCategory = categories?.find(c => c.name.includes('日常'));
 
@@ -83,8 +86,8 @@ export default async function Home() {
         </div>
         
         <div className="space-y-8">
-          {posts && posts.length > 0 ? (
-            posts.map((post, index) => (
+          {filteredPosts && filteredPosts.length > 0 ? (
+            filteredPosts.map((post, index) => (
               <div key={post.id} className={`fade-in-delay-${(index % 3) + 1}`}>
                 <PostCard post={post as unknown as Post} />
               </div>

@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import CategoryContent from "@/components/CategoryContent";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -34,7 +35,7 @@ export default async function PostPage({ params }: PostPageProps) {
 
   const { data: postDataRaw, error } = await supabase
     .from('posts')
-    .select('id, title, content, cover_image, created_at, published_at, category_id, categories(name)')
+    .select('id, title, excerpt, content, cover_image, created_at, published_at, category_id, categories(name, slug)')
     .eq('slug', slug)
     .eq('published', true)
     .single();
@@ -44,14 +45,73 @@ export default async function PostPage({ params }: PostPageProps) {
   }
 
   const postData = postDataRaw as any;
-  // 处理 Supabase 可能返回数组的情况
   const category = Array.isArray(postData.categories) 
     ? postData.categories[0] 
     : postData.categories;
 
+  const isProtected = category?.slug === 'loved';
+
   const formattedDate = postData.published_at
     ? new Date(postData.published_at).toLocaleDateString("zh-CN")
     : new Date(postData.created_at).toLocaleDateString("zh-CN");
+
+  if (isProtected) {
+    return (
+      <div className="container mx-auto max-w-3xl px-4 py-32">
+        <CategoryContent isProtected={true}>
+          <article className="py-16">
+            <div className="mb-12">
+              <Link
+                href="/"
+                className="clay-button inline-flex items-center gap-2 px-6 py-3 text-sm font-medium bg-muted hover:bg-muted/80 text-muted-foreground"
+                aria-label="返回首页"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                返回首页
+              </Link>
+            </div>
+
+            <div className="clay-card p-8 md:p-12 rounded-2xl mb-12">
+              <header className="space-y-6">
+                <div className="flex flex-wrap items-center gap-4 text-sm">
+                  <time 
+                    dateTime={postData.created_at} 
+                    className="clay-tag bg-muted px-4 py-2 text-muted-foreground"
+                  >
+                    {formattedDate}
+                  </time>
+                  {category?.name && (
+                    <span className="clay-tag bg-primary/20 px-4 py-2 text-xs font-medium text-primary">
+                      {category.name}
+                    </span>
+                  )}
+                </div>
+                <h1 className="text-4xl md:text-5xl font-bold text-gradient leading-tight">
+                  {postData.title}
+                </h1>
+              </header>
+
+              <div className="prose prose-zinc dark:prose-invert max-w-none mt-12">
+                <ReactMarkdown 
+                  remarkPlugins={[remarkGfm]} 
+                  rehypePlugins={[rehypeRaw]}
+                  components={{
+                    img: ({ node, ...props }) => (
+                      <img {...props} className="rounded-2xl clay-card p-2 mx-auto" alt={props.alt || ''} />
+                    ),
+                  }}
+                >
+                  {postData.content}
+                </ReactMarkdown>
+              </div>
+            </div>
+          </article>
+        </CategoryContent>
+      </div>
+    );
+  }
 
   return (
     <article className="container mx-auto max-w-3xl px-4 py-16">

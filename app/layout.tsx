@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import { createClient } from "@/utils/supabase/server";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -67,7 +68,8 @@ export default async function RootLayout({
                 <div className="text-sm text-zinc-500">
                   © {new Date().getFullYear()} {settings?.blog_name}. {settings?.footer_text || 'Built with Next.js & Supabase.'}
                 </div>
-                <div className="flex gap-6">
+                <div className="flex items-center gap-6">
+                  <Link href="/category/loved" className="text-sm text-zinc-500 hover:text-primary transition-colors">关于rourou</Link>
                   {settings?.social_links?.github && (
                     <a href={settings.social_links.github} target="_blank" className="text-sm text-zinc-500 hover:text-black dark:hover:text-white transition-colors">GitHub</a>
                   )}

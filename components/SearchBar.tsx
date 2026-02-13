@@ -39,13 +39,15 @@ export default function SearchBar({ className = "", compact = false }: SearchBar
       setIsLoading(true);
       const { data, error } = await supabase
         .from("posts")
-        .select("id, title, slug, excerpt")
+        .select("id, title, slug, excerpt, categories(slug)")
         .eq("published", true)
         .or(`title.ilike.%${query}%,excerpt.ilike.%${query}%`)
-        .limit(5);
+        .limit(10);
 
       if (!error && data) {
-        setResults(data);
+        // 过滤掉 loved 分类的文章，确保搜索结果不包含受保护内容
+        const filteredData = data.filter((post: any) => post.categories?.slug !== 'loved').slice(0, 5);
+        setResults(filteredData);
       }
       setIsLoading(false);
     };
