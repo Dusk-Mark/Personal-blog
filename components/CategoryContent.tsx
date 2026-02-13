@@ -19,7 +19,7 @@ export default function CategoryContent({ posts = [], isProtected, children }: C
   useEffect(() => {
     if (isProtected) {
       const auth = localStorage.getItem('category_loved_auth');
-      const correctPassword = process.env.NEXT_PUBLIC_PROTECTED_CATEGORY_PASSWORD;
+      const correctPassword = process.env.NEXT_PUBLIC_PROTECTED_CATEGORY_PASSWORD || '250531';
       if (auth === correctPassword) {
         setIsAuthenticated(true);
       }
@@ -28,7 +28,7 @@ export default function CategoryContent({ posts = [], isProtected, children }: C
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const correctPassword = process.env.NEXT_PUBLIC_PROTECTED_CATEGORY_PASSWORD;
+    const correctPassword = process.env.NEXT_PUBLIC_PROTECTED_CATEGORY_PASSWORD || '250531';
     if (password === correctPassword) {
       setIsAuthenticated(true);
       setError('');
