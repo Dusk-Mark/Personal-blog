@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import CategoryContent from "@/components/CategoryContent";
+import Comments from "@/components/Comments";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -108,6 +109,8 @@ export default async function PostPage({ params }: PostPageProps) {
               </div>
             </div>
           </article>
+          
+          <Comments postId={postData.id} />
         </CategoryContent>
       </div>
     );
@@ -226,6 +229,8 @@ export default async function PostPage({ params }: PostPageProps) {
           </Link>
         </div>
       </div>
+
+      <Comments postId={postData.id} />
     </article>
   );
 }

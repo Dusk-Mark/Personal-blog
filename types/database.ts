@@ -33,3 +33,14 @@ export interface Settings {
   };
   updated_at: string;
 }
+
+export interface Comment {
+  id: string;
+  post_id: string;
+  parent_id: string | null;
+  author_name: string;
+  author_email: string | null;
+  content: string;
+  is_approved: boolean;
+  created_at: string;
+}
