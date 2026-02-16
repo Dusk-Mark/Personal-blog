@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Post, Category } from '@/types/database';
 import { createClient } from '@/utils/supabase/client';
@@ -29,6 +29,52 @@ export default function PostForm({ post, categories }: PostFormProps) {
     cover_image: post?.cover_image || '',
     tags: post?.tags?.join(', ') || '',
   });
+  
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [draftFound, setDraftFound] = useState<any>(null);
+
+  // 自动保存逻辑
+  useEffect(() => {
+    const key = `draft_post_${post?.id || 'new'}`;
+    const timer = setTimeout(() => {
+      if (formData.title || formData.content) {
+        localStorage.setItem(key, JSON.stringify(formData));
+        setLastSaved(new Date());
+      }
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [formData, post?.id]);
+
+  // 检查是否有未保存的草稿
+  useEffect(() => {
+    const key = `draft_post_${post?.id || 'new'}`;
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // 简单比较，如果草稿与当前内容不同则提示
+        if (JSON.stringify(parsed) !== JSON.stringify(formData)) {
+          setDraftFound(parsed);
+        }
+      } catch (e) {
+        console.error('Failed to parse draft', e);
+      }
+    }
+  }, []);
+
+  const handleRestoreDraft = () => {
+    if (draftFound) {
+      setFormData(draftFound);
+      setDraftFound(null);
+      setLastSaved(new Date());
+    }
+  };
+
+  const handleDiscardDraft = () => {
+    const key = `draft_post_${post?.id || 'new'}`;
+    localStorage.removeItem(key);
+    setDraftFound(null);
+  };
 
   const handleFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -117,6 +163,7 @@ export default function PostForm({ post, categories }: PostFormProps) {
     if (error) {
       alert('保存失败: ' + error.message);
     } else {
+      localStorage.removeItem(`draft_post_${post?.id || 'new'}`);
       router.push('/admin/posts');
       router.refresh();
     }
@@ -124,6 +171,33 @@ export default function PostForm({ post, categories }: PostFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-6xl mx-auto">
+      {draftFound && (
+        <div className="mb-6 p-4 bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-between animate-fade-in">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">📝</span>
+            <div>
+              <h3 className="font-bold text-foreground">发现未保存的草稿</h3>
+              <p className="text-sm text-muted-foreground">您有一个上次未完成的草稿，是否恢复？</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={handleDiscardDraft}
+              className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              丢弃
+            </button>
+            <button
+              type="button"
+              onClick={handleRestoreDraft}
+              className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity font-medium"
+            >
+              恢复草稿
+            </button>
+          </div>
+        </div>
+      )}
       <div className="flex flex-col lg:flex-row gap-8">
         {/* 左侧主要编辑区 */}
         <div className="flex-1 space-y-6">
@@ -283,6 +357,11 @@ export default function PostForm({ post, categories }: PostFormProps) {
               </div>
 
               <div className="pt-6 border-t border-border flex flex-col gap-4">
+                {lastSaved && (
+                  <div className="text-xs text-center text-muted-foreground animate-fade-in">
+                    已自动保存于 {lastSaved.toLocaleTimeString()}
+                  </div>
+                )}
                 <button
                   type="submit"
                   disabled={loading}
