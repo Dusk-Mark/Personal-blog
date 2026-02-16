@@ -17,11 +17,11 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex flex-col md:flex-row min-h-screen bg-background">
       <AdminSidebar />
 
       {/* 主内容区 */}
-      <main className="flex-1 overflow-auto p-8">
+      <main className="flex-1 overflow-auto p-4 md:p-8">
         <div className="mx-auto max-w-5xl">
           {children}
         </div>

@@ -170,7 +170,25 @@ export default function PostForm({ post, categories }: PostFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-6xl mx-auto">
+    <form onSubmit={handleSubmit} className="max-w-6xl mx-auto pb-24 lg:pb-0">
+      {/* 移动端底部操作栏 */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 p-4 bg-background/80 backdrop-blur-md border-t border-border z-50 flex gap-4 animate-slide-up">
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="flex-1 py-3 rounded-xl clay-button bg-muted text-muted-foreground font-bold text-sm"
+        >
+          返回
+        </button>
+        <button
+          type="submit"
+          disabled={loading}
+          className="flex-[2] py-3 rounded-xl clay-button primary font-bold text-sm shadow-lg shadow-primary/20"
+        >
+          {loading ? '保存中...' : (post ? '更新文章' : '发布文章')}
+        </button>
+      </div>
+
       {draftFound && (
         <div className="mb-6 p-4 bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-between animate-fade-in">
           <div className="flex items-center gap-3">
@@ -205,7 +223,7 @@ export default function PostForm({ post, categories }: PostFormProps) {
             <input
               required
               placeholder="文章标题"
-              className="w-full text-4xl font-bold bg-transparent border-none outline-none placeholder:text-muted-foreground/50 p-0 focus:ring-0"
+              className="w-full text-2xl md:text-4xl font-bold bg-transparent border-none outline-none placeholder:text-muted-foreground/50 p-0 focus:ring-0"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             />
@@ -269,17 +287,17 @@ export default function PostForm({ post, categories }: PostFormProps) {
             </div>
 
             {activeTab === 'write' ? (
-              <div className="bg-muted/20 rounded-3xl p-8 border border-border/50 transition-all focus-within:bg-muted/30 focus-within:ring-2 focus-within:ring-primary/10">
+              <div className="bg-muted/20 rounded-3xl p-4 md:p-8 border border-border/50 transition-all focus-within:bg-muted/30 focus-within:ring-2 focus-within:ring-primary/10">
                 <textarea
                   required
                   placeholder="开始写作... (支持 Markdown)"
-                  className="w-full h-[600px] bg-transparent border-none outline-none resize-none placeholder:text-muted-foreground/30 p-0 focus:ring-0 font-mono leading-relaxed"
+                  className="w-full min-h-[400px] lg:h-[600px] bg-transparent border-none outline-none resize-none placeholder:text-muted-foreground/30 p-0 focus:ring-0 font-mono leading-relaxed"
                   value={formData.content}
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 />
               </div>
             ) : (
-              <div className="prose dark:prose-invert max-w-none min-h-[600px] h-[600px] overflow-y-auto bg-muted/10 rounded-3xl p-8 border border-border/30
+              <div className="prose dark:prose-invert max-w-none min-h-[400px] lg:h-[600px] overflow-y-auto bg-muted/10 rounded-3xl p-4 md:p-8 border border-border/30
                 prose-headings:font-bold prose-headings:text-foreground 
                 prose-p:text-foreground/90 prose-p:leading-relaxed
                 prose-a:text-primary prose-a:no-underline prose-a:font-medium prose-a:hover:underline 
