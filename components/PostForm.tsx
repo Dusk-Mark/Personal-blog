@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Post, Category } from '@/types/database';
 import { createClient } from '@/utils/supabase/client';
 import ReactMarkdown from 'react-markdown';
@@ -15,6 +15,7 @@ interface PostFormProps {
 
 export default function PostForm({ post, categories }: PostFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
@@ -32,6 +33,19 @@ export default function PostForm({ post, categories }: PostFormProps) {
   
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [draftFound, setDraftFound] = useState<any>(null);
+
+  // 处理 URL 中的 category 参数
+  useEffect(() => {
+    if (!post && !formData.category_id) {
+      const catSlug = searchParams.get('category');
+      if (catSlug) {
+        const targetCat = categories.find(c => c.slug === catSlug || c.name === catSlug);
+        if (targetCat) {
+          setFormData(prev => ({ ...prev, category_id: targetCat.id }));
+        }
+      }
+    }
+  }, [searchParams, categories, post]);
 
   // 自动保存逻辑
   useEffect(() => {
@@ -128,9 +142,21 @@ export default function PostForm({ post, categories }: PostFormProps) {
     e.preventDefault();
     setLoading(true);
 
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    // 如果没有登录，且分类是 waiwai，则允许提交
+    const isWaiwaiCategory = categories.find(c => c.id === formData.category_id)?.slug === 'waiwai';
+    
+    if (!user && !isWaiwaiCategory) {
+      alert('请先登录后再提交！');
+      setLoading(false);
+      router.push('/admin/login');
+      return;
+    }
+
     const postData: any = {
       title: formData.title,
-      slug: formData.slug,
+      slug: formData.slug || formData.title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, ''),
       excerpt: formData.excerpt,
       content: formData.content,
       category_id: formData.category_id || null,

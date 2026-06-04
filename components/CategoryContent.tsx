@@ -1,16 +1,18 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import PostCard from '@/components/PostCard';
 import { Post } from '@/types/database';
 
 interface CategoryContentProps {
   posts?: Post[];
   isProtected: boolean;
+  currentSlug?: string;
   children?: React.ReactNode;
 }
 
-export default function CategoryContent({ posts = [], isProtected, children }: CategoryContentProps) {
+export default function CategoryContent({ posts = [], isProtected, currentSlug, children }: CategoryContentProps) {
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState('');
@@ -18,7 +20,7 @@ export default function CategoryContent({ posts = [], isProtected, children }: C
   // 检查本地存储是否已经验证过
   useEffect(() => {
     if (isProtected) {
-      const auth = localStorage.getItem('category_loved_auth');
+      const auth = localStorage.getItem('category_protected_auth');
       const correctPassword = process.env.NEXT_PUBLIC_PROTECTED_CATEGORY_PASSWORD || '250531';
       if (auth === correctPassword) {
         setIsAuthenticated(true);
@@ -32,7 +34,7 @@ export default function CategoryContent({ posts = [], isProtected, children }: C
     if (password === correctPassword) {
       setIsAuthenticated(true);
       setError('');
-      localStorage.setItem('category_loved_auth', password);
+      localStorage.setItem('category_protected_auth', password);
     } else {
       setError('密码错误，请重试');
     }
@@ -78,6 +80,28 @@ export default function CategoryContent({ posts = [], isProtected, children }: C
 
   return (
     <div className="space-y-8">
+      {isProtected && (
+        <div className="flex justify-end gap-4 mb-4">
+          {currentSlug === 'loved' && (
+            <Link
+              href="/category/waiwai"
+              className="clay-button secondary flex items-center gap-2 px-6 py-3 text-sm font-medium transition-all hover:scale-105"
+            >
+              <span className="text-lg">🌈</span>
+              关于waiwai
+            </Link>
+          )}
+          {currentSlug === 'waiwai' && (
+            <Link
+              href="/admin/posts/new?category=waiwai"
+              className="clay-button secondary flex items-center gap-2 px-6 py-3 text-sm font-medium transition-all hover:scale-105"
+            >
+              <span className="text-lg">✍️</span>
+              撰写新内容
+            </Link>
+          )}
+        </div>
+      )}
       {posts && posts.length > 0 ? (
         posts.map((post, index) => (
           <div key={post.id} className={`fade-in-delay-${(index % 3) + 1}`}>

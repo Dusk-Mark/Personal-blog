@@ -50,7 +50,7 @@ export default async function PostPage({ params }: PostPageProps) {
     ? postData.categories[0] 
     : postData.categories;
 
-  const isProtected = category?.slug === 'loved';
+  const isProtected = category?.slug === 'loved' || category?.slug === 'waiwai';
 
   const formattedDate = postData.published_at
     ? new Date(postData.published_at).toLocaleDateString("zh-CN")
@@ -59,7 +59,7 @@ export default async function PostPage({ params }: PostPageProps) {
   if (isProtected) {
     return (
       <div className="container mx-auto max-w-3xl px-4 py-32">
-        <CategoryContent isProtected={true}>
+        <CategoryContent isProtected={true} currentSlug={category?.slug}>
           <article className="py-16">
             <div className="mb-12">
               <Link

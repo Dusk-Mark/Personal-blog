@@ -24,7 +24,11 @@ export default async function Home() {
   const error = postsResult.error;
 
   const lovedCategory = categories?.find(c => c.slug === 'loved');
-  const filteredPosts = posts?.filter(post => post.category_id !== lovedCategory?.id);
+  const waiwaiCategory = categories?.find(c => c.slug === 'waiwai');
+  const filteredPosts = posts?.filter(post => 
+    post.category_id !== lovedCategory?.id && 
+    post.category_id !== waiwaiCategory?.id
+  );
 
   const techCategory = categories?.find(c => c.name.includes('技术'));
   const lifeCategory = categories?.find(c => c.name.includes('日常'));

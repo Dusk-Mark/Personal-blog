@@ -45,8 +45,11 @@ export default function SearchBar({ className = "", compact = false }: SearchBar
         .limit(10);
 
       if (!error && data) {
-        // 过滤掉 loved 分类的文章，确保搜索结果不包含受保护内容
-        const filteredData = data.filter((post: any) => post.categories?.slug !== 'loved').slice(0, 5);
+        // 过滤掉 loved 和 waiwai 分类的文章，确保搜索结果不包含受保护内容
+        const filteredData = data.filter((post: any) => 
+          post.categories?.slug !== 'loved' && 
+          post.categories?.slug !== 'waiwai'
+        ).slice(0, 5);
         setResults(filteredData);
       }
       setIsLoading(false);

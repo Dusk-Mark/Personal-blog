@@ -35,8 +35,12 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  const isWaiwaiNewPost = request.nextUrl.pathname === '/admin/posts/new' && 
+                          request.nextUrl.searchParams.get('category') === 'waiwai';
+
   if (
     !user &&
+    !isWaiwaiNewPost &&
     !request.nextUrl.pathname.startsWith('/login') &&
     !request.nextUrl.pathname.startsWith('/auth') &&
     request.nextUrl.pathname.startsWith('/admin') &&

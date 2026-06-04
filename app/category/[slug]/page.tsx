@@ -56,7 +56,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     console.error('Error fetching posts:', error);
   }
 
-  const isProtected = category.slug === 'loved';
+  const isProtected = category.slug === 'loved' || category.slug === 'waiwai';
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-16">
@@ -84,7 +84,11 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         </p>
       </header>
       
-      <CategoryContent posts={posts as unknown as Post[] || []} isProtected={isProtected} />
+      <CategoryContent 
+        posts={posts as unknown as Post[] || []} 
+        isProtected={isProtected} 
+        currentSlug={category.slug} 
+      />
     </div>
   );
 }

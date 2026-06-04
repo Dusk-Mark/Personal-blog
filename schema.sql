@@ -35,3 +35,15 @@ create policy "Admins can delete comments"
 
 -- Realtime (optional, enables real-time updates for comments)
 alter publication supabase_realtime add table comments;
+
+-- Allow anonymous posts for 'waiwai' category
+-- Note: This requires getting the category id for 'waiwai' first.
+-- In Supabase RLS, we can check the category_id of the post being inserted.
+-- Replace 'YOUR_WAIWAI_CATEGORY_ID' with the actual ID from your categories table.
+/*
+create policy "Anyone can insert posts to waiwai category"
+  on posts for insert
+  with check (
+    category_id = (select id from categories where slug = 'waiwai' limit 1)
+  );
+*/
